@@ -1,83 +1,102 @@
 #PyBank
-##In this challenge, you are tasked with creating a Python script for analyzing
-##the financial records of your company. You will give a set of financial data
-##called budget_data.csv. The dataset is composed of two columns: Date and Profit/Losses.
-##Your task is to create a Python script that analyzes the records to calculate each of the following:
-    ##The total number of months included in the dataset
-    ##The total net amount of "Profit/Losses" over the entire period
-    ##The average change in "Profit/Losses" between months over the entire period
-    ##The greatest increase in profits (date and amount) over the entire period
-    ##The greatest decrease in losses (date and amount) over the entire period
-
-##As an example, your analysis should look similar to the one below:
-    ##Financial Analysis
-    ##----------------------------
-    ##Total Months: 86
-    ##Total: $38382578
-    ##Average  Change: $-2315.12
-    ##Greatest Increase in Profits: Feb-2012 ($1926159)
-    ##Greatest Decrease in Profits: Sep-2013 ($-2196167)
-
-##In addition, your final script should both
-    ##print the analysis to the terminal and
-    ##export a text file with the results.
-
-#import os and csv modules
+##########################################################################
+##                                                                      ##
+##     /$$$$$$$            /$$$$$$$                      /$$            ##
+##    | $$__  $$          | $$__  $$                    | $$            ##
+##    | $$  \ $$ /$$   /$$| $$  \ $$  /$$$$$$  /$$$$$$$ | $$   /$$      ##
+##    | $$$$$$$/| $$  | $$| $$$$$$$  |____  $$| $$__  $$| $$  /$$/      ##
+##    | $$____/ | $$  | $$| $$__  $$  /$$$$$$$| $$  \ $$| $$$$$$/       ##
+##    | $$      | $$  | $$| $$  \ $$ /$$__  $$| $$  | $$| $$_  $$       ##
+##    | $$      |  $$$$$$$| $$$$$$$/|  $$$$$$$| $$  | $$| $$ \  $$      ##
+##    |__/       \____  $$|_______/  \_______/|__/  |__/|__/  \__/      ##
+##               /$$  | $$                                              ##
+##              |  $$$$$$/                                              ##
+##               \______/                                               ##
+##                                                                      ##
+##########################################################################
+##                                                                      ##
+##  This Python script analyzes financial data from budget_data.csv.    ##
+##                                                                      ##
+##  Each of the following are calculated:                               ##
+##  -Total number of months included in the dataset                     ##
+##  -Total net amount of "Profit/Losses" over the entire period         ##
+##  -Average change in "Profit/Losses" between months                   ##
+##  -Date and amount for greatest increase in profits                   ##
+##  -Date and amount for greatest decrease in losses                    ##
+##                                                                      ##
+##  Results will be printed to the terminal as well as Results.txt      ##
+##                                                                      ##
+##########################################################################
+## IMPORT OS AND CSV MODULES                                            ##
+##########################################################################
 import os
 import csv
 
-#set file path
-#input
+##########################################################################
+## SET FILE PATHS                                                       ##
+##########################################################################
+## INPUT
 bankcsv = os.path.join('budget_data.csv')
-
-#output
+ 
+## OUTPUT
 resultstxt = os.path.join('results.txt')
-
-#start array to store months
+ 
+##########################################################################
+## SET ARRAYS AND DEFAULT VARIABLE VALUES                               ##
+##########################################################################
+## START ARRAY TO STORE MONTHS 
 months = []
-#set array to store monthly changes
+## START ARRAY TO STORE MONTHLY CHANGES
 changes = []
-#set starting ledger balance to 0
+PLs = []
+## SET PROFIT/LOSS TO START AT 0
 pl = 0
-#set total
+## SET TOTAL TO START AT 0
 total = 0
-
-#define function for calculating bankcsv results
+ 
+##########################################################################
+## DEFINE MYLEDGER FUNCTION FOR CAPTURING MONTHS & CHANGES              ##
+##########################################################################
 def myledger(record):
-    #add month to months array
+    # ADD MONTH TO MONTHS ARRAY
     months.append(record[0])
-    #capture change in P/L as compared to previous month
+    # CAPTURE MONTHLY CHANGE IN P/L AS COMPARED TO PREVIOUS MONTH
     if pl == 0:
-        change = 0  #if no prev month, then 0
+        change = 0  # IF THERE'S NOT PREVIOUS MONTH, DEFAULT CHANGE TO 0
     else:
         change = int(record[1]) - int(pl)
-    #add amount to changes array
+    # ADD CHANGE AMOUNT TO CHANGES ARRAY
     changes.append(change)
-
-#read in the selected file
+ 
+## READ INPUT FILE
 with open(bankcsv, 'r') as csvfile:
 
-    #delimit file contents based on comma
+    # USE READER TO DELIMIT FILE CONTENTS BASED ON COMMA
     csvreader = csv.reader(csvfile, delimiter=',')
-    #skip header
+    # SKIP HEADER
     header = next(csvreader)
 
-    #loop for each row
+    # LOOP FUNCTION FOR EACH ROW
     for row in csvreader:
         myledger(row)
         total = int(total + int(row[1]))
         pl = int(row[1])
-
-#calculate average monthly P/L change
+ 
+##########################################################################
+## PREPARE FINAL ANALYSIS VALUES FOR PRINTING                           ##
+##########################################################################
+## CALCULATE AVERAGE MONTHLY P/L CHANGE
 avgchange = round(float((sum(changes)/(len(changes)-1))),2)
-#count the number of months in the months array
+## COUNT THE NUMBER OF MONTHS IN THE MONTHS ARRAY
 month_count = int(len(months))
-#find greatest increase in profits on the changes array
+## RETURN THE GREATEST INCREASE IN PROFITS ON THE CHANGES ARRAY
 GInc = max(changes)
-#find greatest decrease in losses on the changes array
+## FIND THE GREATEST DECREASE IN LOSSES ON THE CHANGES ARRAY
 GDec = min(changes)
-
-#print to terminal
+ 
+##########################################################################
+##  PRINT RESULTS TO TERMINAL                                           ##
+##########################################################################
 print("Financial Analysis")
 print("----------------------------")
 print(f"Total Months: {month_count}")
@@ -85,8 +104,10 @@ print(f"Total: ${total}")
 print(f"Average  Change: ${avgchange}")
 print(f"Greatest Increase in Profits: {months[changes.index(GInc)]} (${GInc})")
 print(f"Greatest Decrease in Profits: {months[changes.index(GDec)]} (${GDec})")
-
-#print to text file
+ 
+##########################################################################
+##  PRINT RESULTS TO OUTPUT                                             ##
+##########################################################################
 with open(resultstxt, 'w') as text_file:
     text_file.write("Financial Analysis"+ '\n')
     text_file.write("----------------------------"+ '\n')
